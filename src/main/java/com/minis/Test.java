@@ -1,5 +1,7 @@
 package com.minis;
 
+import com.minis.beans.BeanException;
+import com.minis.context.ClassPathXmlApplicationContext;
 import com.minis.test.AsService;
 
 /**
@@ -9,7 +11,12 @@ import com.minis.test.AsService;
 public class Test {
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
-        AsService asService = (AsService) context.getBean("asService");
-        asService.sayHello();
+        AsService asService = null;
+        try {
+            asService = (AsService) context.getBean("asService");
+            asService.sayHello();
+        } catch (BeanException e) {
+            e.printStackTrace();
+        }
     }
 }
