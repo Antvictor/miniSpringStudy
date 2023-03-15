@@ -1,15 +1,13 @@
 package com.minis.beans;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author exccedy
  * @date 2023/3/14
  **/
-public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory{
+public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry{
     private Map<String, BeanDefinition> beanDefinitions = new HashMap<>();
 //    private List<String> beanNames = new ArrayList<>(); name 交给SingletonBeanRegistry管理，这里删除
 //    private Map<String, Object> beans = new HashMap<>(); beans 交给SingletonBeanRegistry管理，这里删除
@@ -44,7 +42,41 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         return false;
     }
 
-    public void registerBeanDefinition(BeanDefinition definition) {
-        this.beanDefinitions.put(definition.getId(), definition);
+    @Override
+    public void registerBeanDefinition(String name, BeanDefinition definition) {
+        this.beanDefinitions.put(name, definition);
+        if (!definition.isLazyInit()) {
+            try {
+                getBean(name);
+            } catch (BeanException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @Override
+    public BeanDefinition getBeanDefinition(String name) {
+        return beanDefinitions.get(name);
+    }
+
+    @Override
+    public void removeDefinition(String name) {
+        beanDefinitions.remove(name);
+    }
+
+    @Override
+    public boolean containsBeanDefinition(String name) {
+        return beanDefinitions.containsKey(name);
+    }
+
+    public boolean isSingleton(String name) {
+        return beanDefinitions.get(name).isSingleton();
+    }
+    public boolean isPrototype(String name) {
+        return beanDefinitions.get(name).isPrototype();
+    }
+    public Class<?> getType (String name) {
+        return beanDefinitions.get(name).getClass();
     }
 }
