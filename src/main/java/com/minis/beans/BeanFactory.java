@@ -14,7 +14,15 @@ public interface BeanFactory {
 
     /**
      * 注册实例
-     * @param definition
+     * @param beanName bean名称
+     * @param obj 实例
      */
-    public void registerBeanDefinition(BeanDefinition definition);
+    public void registerBean(String beanName, Object obj);
+
+    /**
+     * 是否包含Bean
+     * @param name
+     * @return
+     */
+    public boolean containsBean(String name);
 }

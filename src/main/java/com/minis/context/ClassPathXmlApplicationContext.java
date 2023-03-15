@@ -17,7 +17,7 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
      */
     public  ClassPathXmlApplicationContext(String fileName) {
         Resource resource = new ClassPathXmlResource(fileName);
-        BeanFactory beanFactory = new SimpleBeanFactory();
+        SimpleBeanFactory beanFactory = new SimpleBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
         reader.loadDefinitions(resource);
         this.beanFactory = beanFactory;
@@ -29,7 +29,12 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
     }
 
     @Override
-    public void registerBeanDefinition(BeanDefinition definition) {
-        this.beanFactory.registerBeanDefinition(definition);
+    public void registerBean(String beanName, Object obj) {
+        this.beanFactory.registerBean(beanName, obj);
+    }
+
+    @Override
+    public boolean containsBean(String name) {
+        return false;
     }
 }

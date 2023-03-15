@@ -9,35 +9,42 @@ import java.util.Map;
  * @author exccedy
  * @date 2023/3/14
  **/
-public class SimpleBeanFactory implements BeanFactory{
-    private List<BeanDefinition> beanDefinitions = new ArrayList<>();
-    private List<String> beanNames = new ArrayList<>();
-    private Map<String, Object> beans = new HashMap<>();
+public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory{
+    private Map<String, BeanDefinition> beanDefinitions = new HashMap<>();
+//    private List<String> beanNames = new ArrayList<>(); name 交给SingletonBeanRegistry管理，这里删除
+//    private Map<String, Object> beans = new HashMap<>(); beans 交给SingletonBeanRegistry管理，这里删除
 
     @Override
     public Object getBean(String beanName) throws BeanException {
         // 先查询
-        Object o  = beans.get(beanName);
-        if (null == o) {
+        Object singleton  = this.getSingleton(beanName);
+        if (null == singleton) {
             // 为空再实例
-            int index = beanNames.indexOf(beanName);
-            if (-1 == index) {
+            BeanDefinition definition = beanDefinitions.get(beanName);
+            if (null == definition) {
                 throw new BeanException("no such instance");
             }
-            BeanDefinition beanDefinition = beanDefinitions.get(index);
             try {
-                o = Class.forName(beanDefinition.getName()).newInstance();
+                singleton = Class.forName(definition.getName()).newInstance();
             } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            beans.put(beanName, o);
+            this.registerBean(beanName, singleton);
         }
-        return o;
+        return singleton;
     }
 
     @Override
+    public void registerBean(String beanName, Object obj) {
+        this.registerSingleton(beanName, obj);
+    }
+
+    @Override
+    public boolean containsBean(String name) {
+        return false;
+    }
+
     public void registerBeanDefinition(BeanDefinition definition) {
-        this.beanDefinitions.add(definition);
-        this.beanNames.add(definition.getId());
+        this.beanDefinitions.put(definition.getId(), definition);
     }
 }
