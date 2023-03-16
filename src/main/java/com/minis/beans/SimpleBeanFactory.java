@@ -9,8 +9,6 @@ import java.util.Map;
  **/
 public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry{
     private Map<String, BeanDefinition> beanDefinitions = new HashMap<>();
-//    private List<String> beanNames = new ArrayList<>(); name 交给SingletonBeanRegistry管理，这里删除
-//    private Map<String, Object> beans = new HashMap<>(); beans 交给SingletonBeanRegistry管理，这里删除
 
     @Override
     public Object getBean(String beanName) throws BeanException {
