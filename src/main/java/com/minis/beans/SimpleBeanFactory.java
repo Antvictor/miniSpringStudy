@@ -71,17 +71,42 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 result = clz.newInstance();
             }
 
-            // 处理字段
-            PropertyValues propertyValues = definition.getPropertyValues();
-            if (!propertyValues.isEmpty()) {
-                int size = propertyValues.size();
-                for (int i = 0; i < size; i++) {
-                    PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
-                    String name = propertyValue.getName();
-                    String type = propertyValue.getType();
-                    Object value = propertyValue.getValue();
-                    Class<?>[] paramTypes = new Class[1];
-                    Object[] paramValues = new Object[1];
+            handleProperties(definition, clz, result);
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    /**
+     * 处理字段
+     * @param definition 对象映射
+     * @param clz 类
+     * @param result 实例
+     */
+    private void handleProperties(BeanDefinition definition, Class<?> clz, Object result) {
+        // 处理字段
+        PropertyValues propertyValues = definition.getPropertyValues();
+        if (!propertyValues.isEmpty()) {
+            int size = propertyValues.size();
+            for (int i = 0; i < size; i++) {
+                PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
+                String name = propertyValue.getName();
+                String type = propertyValue.getType();
+                Object value = propertyValue.getValue();
+                Class<?>[] paramTypes = new Class[1];
+                Object[] paramValues = new Object[1];
+                if (propertyValue.isRef()) {
+                    try {
+                        // type是类名
+                        paramTypes[0] = Class.forName(type);
+                        // value是ref引用的beanId
+                        paramValues[0] = getBean((String) value);
+                    } catch (ClassNotFoundException | BeanException e) {
+                        e.printStackTrace();
+                    }
+                } else {
                     if (Integer.class.getSimpleName().equals(type) || Integer.class.getName().equals(type)) {
                         paramTypes[0] = Integer.class;
                         paramValues[0] = Integer.valueOf((String) value);
@@ -92,20 +117,16 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                         paramTypes[0] = String.class;
                         paramValues[0] = value;
                     }
-                    String methodName = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
-                    try {
-                        Method method = clz.getMethod(methodName, paramTypes);
-                        method.invoke(result, paramValues);
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
+                }
+                String methodName = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
+                try {
+                    Method method = clz.getMethod(methodName, paramTypes);
+                    method.invoke(result, paramValues);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    e.printStackTrace();
                 }
             }
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
         }
-
-        return result;
     }
 
     @Override

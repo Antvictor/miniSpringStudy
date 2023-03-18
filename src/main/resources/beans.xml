@@ -4,5 +4,10 @@
         <constructor-arg type="String" name="name" value="Victor"/>
         <constructor-arg type="Integer" name="age" value="25"/>
         <property type="Integer" name="age" value="261"/>
+        <property type="com.minis.test.BaseService" name="base" ref="baseService"/>
+    </bean>
+    <bean id="base2Service" className="com.minis.test.Base2Service"/>
+    <bean id="baseService" className="com.minis.test.BaseService">
+        <property type="com.minis.test.Base2Service" name="base2Service" ref="base2Service"/>
     </bean>
 </beans>

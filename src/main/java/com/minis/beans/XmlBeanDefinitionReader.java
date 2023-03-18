@@ -1,6 +1,7 @@
 package com.minis.beans;
 
 import com.minis.core.Resource;
+import com.minis.utils.StringUtils;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
@@ -31,13 +32,22 @@ public class XmlBeanDefinitionReader {
             // 获取属性
             List<Element> properties = element.elements("property");
             PropertyValues pvs = new PropertyValues();
+            List<String> refs = new ArrayList<>();
             for (Element e : properties) {
                 String name = e.attributeValue("name");
                 String type = e.attributeValue("type");
                 String value = e.attributeValue("value");
-                pvs.addPropertyValue(new PropertyValue(name, type, value));
+                String ref = e.attributeValue("ref");
+                boolean isRef = false;
+                if (StringUtils.isEmpty(value) && !StringUtils.isEmpty(ref)) {
+                    value = ref;
+                    refs.add(ref);
+                    isRef = true;
+                }
+                pvs.addPropertyValue(new PropertyValue(name, type, value, isRef));
             }
             beanDefinition.setPropertyValues(pvs);
+            beanDefinition.setDependsOn(refs.toArray(new String[0]));
 
             // 获取构造方法参数
             List<Element> constructorArg = element.elements("constructor-arg");

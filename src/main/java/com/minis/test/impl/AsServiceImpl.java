@@ -1,6 +1,7 @@
 package com.minis.test.impl;
 
 import com.minis.test.AsService;
+import com.minis.test.BaseService;
 
 /**
  * @author exccedy
@@ -9,6 +10,7 @@ import com.minis.test.AsService;
 public class AsServiceImpl implements AsService {
     private String name;
     private Integer age;
+    private BaseService base;
 
     public AsServiceImpl(String name, Integer age) {
         this.name = name;
@@ -17,7 +19,8 @@ public class AsServiceImpl implements AsService {
 
     @Override
     public void sayHello() {
-        System.out.println("My name is : " + name + " and age is : "+ age);
+        System.out.println("Hello, My name is : " + name + " and age is : "+ age + " and base say : ");
+        base.sayHello();
     }
 
     public String getName() {
@@ -34,5 +37,13 @@ public class AsServiceImpl implements AsService {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public BaseService getBase() {
+        return base;
+    }
+
+    public void setBase(BaseService base) {
+        this.base = base;
     }
 }

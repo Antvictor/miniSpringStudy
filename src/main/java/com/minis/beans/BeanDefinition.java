@@ -8,9 +8,9 @@ public class BeanDefinition {
     private String SCOPE_SINGLETON = "singleton";
     private String SCOPE_PROTOTYPE = "prototype";
     /**
-     * 是否加载是初始化
+     * 是否懒初始化
      */
-    private boolean lazyInit = false;
+    private boolean lazyInit = true;
     /**
      * 初始化的方法名
      */
