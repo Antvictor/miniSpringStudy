@@ -3,7 +3,9 @@ package com.minis.beans;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +15,17 @@ import java.util.Map;
 public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
     private Map<String, BeanDefinition> beanDefinitions = new HashMap<>();
     private Map<String, Object> earlySingletonObjects = new HashMap<>();
+    private List<String> beanDefinitionNames = new ArrayList<>();
+
+    public void refresh() {
+        for (String beanName : beanDefinitionNames) {
+            try {
+                getBean(beanName);
+            } catch (BeanException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Override
     public Object getBean(String beanName) throws BeanException {
@@ -162,6 +175,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
     @Override
     public void registerBeanDefinition(String name, BeanDefinition definition) {
         this.beanDefinitions.put(name, definition);
+        this.beanDefinitionNames.add(name);
         if (!definition.isLazyInit()) {
             try {
                 getBean(name);
