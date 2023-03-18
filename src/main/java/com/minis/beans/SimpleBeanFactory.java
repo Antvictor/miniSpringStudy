@@ -12,30 +12,52 @@ import java.util.Map;
  **/
 public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
     private Map<String, BeanDefinition> beanDefinitions = new HashMap<>();
+    private Map<String, Object> earlySingletonObjects = new HashMap<>();
 
     @Override
     public Object getBean(String beanName) throws BeanException {
         // 先查询
         Object singleton = this.getSingleton(beanName);
         if (null == singleton) {
-            // 为空再实例
-            BeanDefinition definition = beanDefinitions.get(beanName);
-            if (null == definition) {
-                throw new BeanException("no such instance");
-            }
+            singleton = earlySingletonObjects.get(beanName);
+            if (null == singleton) {
+                // 为空再实例
+                BeanDefinition definition = beanDefinitions.get(beanName);
+                if (null == definition) {
+                    throw new BeanException("no such instance");
+                }
 //            try {
-            singleton = createBean(definition);
+                singleton = createBean(definition);
 //            } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
 //                e.printStackTrace();
 //            }
-            this.registerBean(beanName, singleton);
+                this.registerBean(beanName, singleton);
+            }
         }
         return singleton;
     }
 
     private Object createBean(BeanDefinition definition) {
         Class<?> clz = null;
+        Object result = doCreateBean(definition);
+        this.earlySingletonObjects.put(definition.getId(), result);
+        try {
+            clz = Class.forName(definition.getName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        handleProperties(definition, clz, result);
+        return result;
+    }
+
+    /**
+     * 创建仅调用了构造方法的实例
+     * @param definition
+     * @return
+     */
+    private Object doCreateBean(BeanDefinition definition) {
         Constructor<?> con = null;
+        Class<?> clz = null;
         Object result = null;
         try {
             clz = Class.forName(definition.getName());
@@ -70,20 +92,18 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
             } else {
                 result = clz.newInstance();
             }
-
-            handleProperties(definition, clz, result);
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         return result;
     }
 
     /**
      * 处理字段
+     *
      * @param definition 对象映射
-     * @param clz 类
-     * @param result 实例
+     * @param clz        类
+     * @param result     实例
      */
     private void handleProperties(BeanDefinition definition, Class<?> clz, Object result) {
         // 处理字段

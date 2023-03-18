@@ -6,7 +6,9 @@
         <property type="Integer" name="age" value="261"/>
         <property type="com.minis.test.BaseService" name="base" ref="baseService"/>
     </bean>
-    <bean id="base2Service" className="com.minis.test.Base2Service"/>
+    <bean id="base2Service" className="com.minis.test.Base2Service">
+        <property type="com.minis.test.impl.AsServiceImpl" name="asService" ref="asService"/>
+    </bean>
     <bean id="baseService" className="com.minis.test.BaseService">
         <property type="com.minis.test.Base2Service" name="base2Service" ref="base2Service"/>
     </bean>
