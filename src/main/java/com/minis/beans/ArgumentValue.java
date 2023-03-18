@@ -45,4 +45,13 @@ public class ArgumentValue {
     public void setType(String type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "ArgumentValue{" +
+                "value=" + value +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }

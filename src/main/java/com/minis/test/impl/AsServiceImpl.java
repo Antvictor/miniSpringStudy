@@ -17,7 +17,7 @@ public class AsServiceImpl implements AsService {
 
     @Override
     public void sayHello() {
-        System.out.println("as service say Hello");
+        System.out.println("My name is : " + name + " and age is : "+ age);
     }
 
     public String getName() {

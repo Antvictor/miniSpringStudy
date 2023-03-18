@@ -8,11 +8,26 @@ package com.minis.beans;
  **/
 public class PropertyValue {
     private String name;
+    private String type;
     private Object value;
 
     public PropertyValue(String name, Object value) {
         this.name = name;
         this.value = value;
+    }
+
+    public PropertyValue(String name, String type, Object value) {
+        this.name = name;
+        this.type = type;
+        this.value = value;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getName() {

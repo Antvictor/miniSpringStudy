@@ -8,17 +8,16 @@ import java.util.*;
  * @date 2023/3/15
  **/
 public class ArgumentValues {
-    private final Map<Integer, ArgumentValue> indexArgumentValues = new HashMap<>();
     private final List<ArgumentValue> genericArgumentValues = new LinkedList<>();
 
     public ArgumentValues(){
     }
-    private void addIndexArgumentValue(Integer key, ArgumentValue argumentValue) {
-        this.indexArgumentValues.put(key, argumentValue);
+    public void addArgumentValue(ArgumentValue argumentValue) {
+        this.genericArgumentValues.add(argumentValue);
     }
 
     public ArgumentValue getIndexedArgumentValue(int index) {
-        return this.indexArgumentValues.get(index);
+        return this.genericArgumentValues.get(index);
     }
     public void addGenericArgumentValue(Object value, String type) {
         this.genericArgumentValues.add(new ArgumentValue(value, type));
@@ -27,4 +26,6 @@ public class ArgumentValues {
 
     public int getArgumentCount() { return this.genericArgumentValues.size(); }
     public boolean isEmpty() { return this.genericArgumentValues.isEmpty(); }
+
+
 }

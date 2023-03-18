@@ -3,6 +3,6 @@
     <bean id="asService" className="com.minis.test.impl.AsServiceImpl">
         <constructor-arg type="String" name="name" value="Victor"/>
         <constructor-arg type="Integer" name="age" value="25"/>
-        <perproty type="Integer" name="age" value="261"/>
+        <property type="Integer" name="age" value="261"/>
     </bean>
 </beans>
